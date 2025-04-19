@@ -1,4 +1,3 @@
-
 import requests
 import xml.etree.ElementTree as ET
 from urllib.parse import quote
@@ -7,9 +6,9 @@ import re
 OC = "chetera"
 BASE = "http://www.law.go.kr"
 
-
 def get_law_list_from_api(query):
-    encoded_query = quote(query)
+    exact_query = f'"{query}"'
+    encoded_query = quote(exact_query)
     page = 1
     laws = []
     while True:
@@ -30,7 +29,6 @@ def get_law_list_from_api(query):
         page += 1
     return laws
 
-
 def get_law_text_by_mst(mst):
     url = f"{BASE}/DRF/lawService.do?OC={OC}&target=law&MST={mst}&type=XML"
     try:
@@ -40,16 +38,13 @@ def get_law_text_by_mst(mst):
     except:
         return None
 
-
 def clean(text):
     return re.sub(r"\s+", "", text or "")
-
 
 def highlight(text, keyword):
     if not text:
         return ""
     return text.replace(keyword, f"<span style='color:red'>{keyword}</span>")
-
 
 def get_highlighted_articles(mst, keyword):
     xml_data = get_law_text_by_mst(mst)
@@ -97,7 +92,10 @@ def get_highlighted_articles(mst, keyword):
                     호출력.append(f"&nbsp;&nbsp;{highlight(목내용, keyword)}")
 
             if keyword_clean in clean(항내용) or 호출력:
-                uni_num = chr(9311 + int(항번호)) if 항번호.isdigit() else f"ⓞ{항번호}"
+                try:
+                    uni_num = chr(9311 + int(항번호))  # '①' = chr(9312)
+                except:
+                    uni_num = 항번호
                 항출력.append(f"{uni_num} {highlight(항내용, keyword)}<br>" + "<br>".join(호출력))
 
         if 조출력 or 항출력:
@@ -110,3 +108,4 @@ def get_highlighted_articles(mst, keyword):
             results.append(output)
 
     return "<br><br>".join(results) if results else "🔍 해당 검색어를 포함한 조문이 없습니다."
+
