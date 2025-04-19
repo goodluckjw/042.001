@@ -1,9 +1,5 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import streamlit as st
-from law_processor import get_law_list_from_api, get_highlighted_articles
+from processing.law_processor import get_law_list_from_api, get_highlighted_articles
 
 st.set_page_config(page_title="📘 부칙 개정 도우미")
 st.title("📘 부칙 개정 도우미")
@@ -33,7 +29,7 @@ if st.session_state.search_triggered and search_word:
         st.success(f"✅ 총 {len(laws)}개의 법령을 찾았습니다.")
         for idx, law in enumerate(laws, 1):
             key = law["MST"]
-            with st.expander(f"{idx:02d}. {law['법령명']}"):
+            with st.expander(f"{idx}. {law['법령명']}"):
                 st.markdown(f"[🔗 원문 보기]({law['URL']})", unsafe_allow_html=True)
                 if key not in st.session_state.law_details:
                     html = get_highlighted_articles(key, search_word)
