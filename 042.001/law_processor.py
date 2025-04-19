@@ -93,7 +93,7 @@ def get_highlighted_articles(mst, keyword):
 
             if keyword_clean in clean(항내용) or 호출력:
                 try:
-                    uni_num = chr(9311 + int(항번호))  # '①' = chr(9312)
+                    uni_num = chr(9311 + int(항번호))  # 9312 = '①'
                 except:
                     uni_num = 항번호
                 항출력.append(f"{uni_num} {highlight(항내용, keyword)}<br>" + "<br>".join(호출력))
@@ -108,4 +108,3 @@ def get_highlighted_articles(mst, keyword):
             results.append(output)
 
     return "<br><br>".join(results) if results else "🔍 해당 검색어를 포함한 조문이 없습니다."
-
